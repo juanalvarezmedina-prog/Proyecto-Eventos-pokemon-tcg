@@ -81,8 +81,7 @@ public class Consola {
         System.out.println("6. Pasar turno");
     }
 
-    // Devuelve null si cancela o si no hay Pokemon en la mano.
-    // Sin activo (inicio de partida) no se permite cancelar.
+
     public Pokemon elegirPokemonDeMano(Jugador jugador) {
         List<Pokemon> opciones = new ArrayList<>();
         for (Carta c : jugador.getMano()) {
@@ -135,7 +134,6 @@ public class Consola {
         return opcion == 0 ? null : opciones.get(opcion - 1);
     }
 
-    // Devuelve null si cancela o no hay entrenadores en la mano.
     public Entrenador elegirEntrenadorDeMano(Jugador jugador) {
         List<Entrenador> opciones = new ArrayList<>();
         for (Carta c : jugador.getMano()) {
@@ -158,8 +156,7 @@ public class Consola {
         return opcion == 0 ? null : opciones.get(opcion - 1);
     }
 
-    // Devuelve el indice (desde 0) en el banco, o -1 si cancela.
-    // Con puedeCancelar en false (reemplazo obligatorio) no se ofrece cancelar.
+
     public int elegirDelBanco(Jugador jugador, boolean puedeCancelar) {
         List<PokemonEnJuego> banco = jugador.getCampo().getBanco();
         if (banco.isEmpty()) {
@@ -178,7 +175,7 @@ public class Consola {
         return opcion == 0 ? -1 : opcion - 1;
     }
 
-    // Devuelve null si cancela o no hay ataques.
+  
     public Ataque elegirAtaque(PokemonEnJuego activo) {
         if (activo == null) {
             System.out.println("No tienes Pokemon activo.");
@@ -245,3 +242,4 @@ public class Consola {
         return sb.toString();
     }
 }
+//no me gusta java
