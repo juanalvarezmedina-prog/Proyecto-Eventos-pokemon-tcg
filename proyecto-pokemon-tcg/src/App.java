@@ -8,14 +8,20 @@ public class App {
     }
 
     private static Jugador crearJugador(Consola consola, int numero) {
-        String nombre = consola.leerTexto("Jugador " + numero + ", ingresa tu nombre:");
+    String nombre = consola.leerTexto("Jugador " + numero + ", ingresa tu nombre:");
+    while (true) {
         System.out.println("Elige tu mazo:");
         System.out.println("1. Fuego\n2. Agua\n3. Eléctrico");
         int opcion = consola.leerOpcion(1, 3);
-        return switch (opcion) {
+        Jugador jugador = switch (opcion) {
             case 1 -> new Jugador(nombre, CartaFactory.mazoFuego(), TipoEnergia.Fuego);
             case 2 -> new Jugador(nombre, CartaFactory.mazoAgua(), TipoEnergia.Agua);
             default -> new Jugador(nombre, CartaFactory.mazoElectrico(), TipoEnergia.Electrico);
         };
+        if (jugador.getMazo().esValido()) {
+            return jugador;
+        }
+        consola.mostrarMensaje("Ese mazo no es válido (20 cartas, máximo 2 copias de cada una y mínimo 6 Pokémon). Elige otro.");
+        }
     }
 }

@@ -9,13 +9,13 @@ public class PokeBall extends Entrenador {
         if (basico == null) {
             return false;
         }
-        jugador.getMano().add(basico);
+        jugador.agregarAMano(basico);
         return true;
     }
 
     @Override 
     public void mostrarInformacion() {
-     System.out.println("Nombre " + getNombre());
-     System.out.println("Efecto: Busca un Pokémon Básico en tu mazo y añádelo a tu mano.");
+    System.out.println("Nombre " + getNombre());
+    System.out.println("Efecto: Busca un Pokémon Básico en tu mazo y añádelo a tu mano.");
     }
 }

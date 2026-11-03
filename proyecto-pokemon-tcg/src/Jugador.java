@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 public class Jugador {
     private static final int ManoInicial = 5;
@@ -31,8 +32,16 @@ public class Jugador {
     }
 
     public List<Carta> getMano() {
-        return mano;
-    }
+    return Collections.unmodifiableList(mano);
+}
+
+public void agregarAMano(Carta carta) {
+    mano.add(carta);
+}
+
+public void descartarMano() {
+    mano.clear();
+}
 
     public Campo getCampo() {
         return campo;

@@ -14,19 +14,19 @@ public class CartaFactory {
                 return c;
             case "squirtle":
                 PokemonBasico s = new PokemonBasico("Squirtle", TipoEnergia.Agua, 60, 1);
-                s.agregarAtaque(new Ataque(" Burbujas", TipoEnergia.Agua, (byte) 1, (short) 20));
+                s.agregarAtaque(new Ataque("Placaje", TipoEnergia.Agua, (byte) 1, (short) 20));
                 return s;
             case "jigglypuff":
                 PokemonBasico j = new PokemonBasico("Jigglypuff", TipoEnergia.Incoloro, 70, 1);
-                j.agregarAtaque(new Ataque("Canto", TipoEnergia.Incoloro, (byte) 1, (short) 20));
+                j.agregarAtaque(new Ataque("Golpe", TipoEnergia.Incoloro, (byte) 1, (short) 20));
                 return j;
             case "magikarp":
                 PokemonBasico m = new PokemonBasico("Magikarp", TipoEnergia.Agua, 30, 1);
-                m.agregarAtaque(new Ataque("Salto", TipoEnergia.Agua, (byte) 1, (short) 10));
+                m.agregarAtaque(new Ataque("Chapoteo", TipoEnergia.Agua, (byte) 1, (short) 10));
                 return m;
             case "snorlax":
                 PokemonBasico s2 = new PokemonBasico("Snorlax", TipoEnergia.Incoloro, 150, 4);
-                s2.agregarAtaque(new Ataque("Comer", TipoEnergia.Incoloro, (byte) 1, (short) 30));
+                s2.agregarAtaque(new Ataque("Golpe Cuerpo", TipoEnergia.Incoloro, (byte) 3, (short) 100));
                 return s2;
             case "mewtwo ex":
                 PokemonEx m2 = new PokemonEx("Mewtwo EX", TipoEnergia.Psiquico, 150, 1);
@@ -35,12 +35,12 @@ public class CartaFactory {
                 return m2;
             case "zapdos ex":
                 PokemonEx z = new PokemonEx("Zapdos EX", TipoEnergia.Electrico, 130, 1);
-                z.agregarAtaque(new Ataque("Picotazo", TipoEnergia.Electrico, (byte) 1, (short) 30));
+                z.agregarAtaque(new Ataque("Picotazo", TipoEnergia.Incoloro, (byte) 1, (short) 30));
                 z.agregarAtaque(new Ataque("Tormenta Eléctrica", TipoEnergia.Electrico, (byte) 3, (short) 100));
                 return z;
             case "moltres ex":
                 PokemonEx m3 = new PokemonEx("Moltres EX", TipoEnergia.Fuego, 130, 2);
-                m3.agregarAtaque(new Ataque("Aleteo", TipoEnergia.Fuego, (byte) 1, (short) 30));
+                m3.agregarAtaque(new Ataque("Aleteo", TipoEnergia.Incoloro, (byte) 1, (short) 30));
                 m3.agregarAtaque(new Ataque("Danza Infernal", TipoEnergia.Fuego, (byte) 3, (short) 70));
                 return m3;
             case "articuno ex":
@@ -93,7 +93,7 @@ public class CartaFactory {
     public static Mazo mazoFuego() {
         return crearMazo(List.of(
             "Charmander", "Charmander", "Moltres EX", "Moltres EX",
-            "Zapdos EX", "Zapdos EX", "Jigglypuff", "Jigglypuff",
+            "Articuno EX", "Articuno EX", "Jigglypuff", "Jigglypuff",
             "Snorlax", "Snorlax",
             "Investigacion del Profesor", "Investigacion del Profesor",
             "Pocion", "Pocion", "Pokeball", "Pokeball",
@@ -113,7 +113,7 @@ public static Mazo mazoAgua() {
 public static Mazo mazoElectrico() {
     return crearMazo(List.of(
         "Pikachu", "Pikachu", "Zapdos EX", "Zapdos EX",
-        "Moltres EX", "Moltres EX", "Jigglypuff", "Jigglypuff",
+        "Articuno EX", "Articuno EX", "Jigglypuff", "Jigglypuff",
         "Snorlax", "Snorlax",
         "Investigacion del Profesor", "Investigacion del Profesor",
         "Pocion", "Pocion", "Pokeball", "Pokeball",
