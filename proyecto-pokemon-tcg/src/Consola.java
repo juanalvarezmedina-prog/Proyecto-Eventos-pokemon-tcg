@@ -244,4 +244,8 @@ public class Consola {
         }
         return sb.toString();
     }
+    public String leerTexto(String pregunta) {
+        System.out.print(pregunta + " ");
+        return scanner.nextLine().trim();
+    }
 }

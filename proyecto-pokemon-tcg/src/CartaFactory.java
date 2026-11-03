@@ -63,7 +63,7 @@ public class CartaFactory {
                 return null;
         }
     }
-    public List<String> nombresDisponibles() {
+    public static  List<String> nombresDisponibles() {
         return List.of(
                 "Pikachu",
                 "Charmander",
@@ -82,5 +82,42 @@ public class CartaFactory {
                 "Misty"
         );
     }
+    public static Mazo crearMazo(List<String> nombres) {
+        Mazo mazo = new Mazo();
+        for (String nombre : nombres) {
+            mazo.agregar(crearCarta(nombre));
+        }
+        return mazo;
+    }
+
+    public static Mazo mazoFuego() {
+        return crearMazo(List.of(
+            "Charmander", "Charmander", "Moltres EX", "Moltres EX",
+            "Zapdos EX", "Zapdos EX", "Jigglypuff", "Jigglypuff",
+            "Snorlax", "Snorlax",
+            "Investigacion del Profesor", "Investigacion del Profesor",
+            "Pocion", "Pocion", "Pokeball", "Pokeball",
+            "Turbo Velocidad", "Turbo Velocidad", "Misty", "Misty"));
+    }
+
+public static Mazo mazoAgua() {
+    return crearMazo(List.of(
+        "Squirtle", "Squirtle", "Magikarp", "Magikarp",
+        "Articuno EX", "Articuno EX", "Jigglypuff", "Jigglypuff",
+        "Snorlax", "Snorlax",
+        "Investigacion del Profesor", "Investigacion del Profesor",
+        "Pocion", "Pocion", "Pokeball", "Pokeball",
+        "Misty", "Misty", "Turbo Velocidad", "Turbo Velocidad"));
+}
+
+public static Mazo mazoElectrico() {
+    return crearMazo(List.of(
+        "Pikachu", "Pikachu", "Zapdos EX", "Zapdos EX",
+        "Moltres EX", "Moltres EX", "Jigglypuff", "Jigglypuff",
+        "Snorlax", "Snorlax",
+        "Investigacion del Profesor", "Investigacion del Profesor",
+        "Pocion", "Pocion", "Pokeball", "Pokeball",
+        "Turbo Velocidad", "Turbo Velocidad", "Misty", "Misty"));
+}
 }
 
