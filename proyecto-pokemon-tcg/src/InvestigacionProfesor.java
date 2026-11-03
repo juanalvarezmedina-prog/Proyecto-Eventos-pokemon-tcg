@@ -5,7 +5,8 @@ public class InvestigacionProfesor extends Entrenador {
 
     @Override
     public boolean activar(Jugador jugador, Jugador rival) {
-    
+        
+        jugador.getMano().clear();
         jugador.robarCarta();
         jugador.robarCarta();
         return true;
