@@ -15,7 +15,7 @@ public class PokeBall extends Entrenador {
 
     @Override 
     public void mostrarInformacion() {
-    System.out.println("Nombre " + getNombre());
+    System.out.println("Nombre: " + getNombre());
     System.out.println("Efecto: Busca un Pokémon Básico en tu mazo y añádelo a tu mano.");
     }
 }

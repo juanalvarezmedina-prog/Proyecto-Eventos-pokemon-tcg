@@ -15,6 +15,6 @@ public boolean activar(Jugador jugador, Jugador rival) {
     @Override
     public void mostrarInformacion() {
         System.out.println("Nombre: " + getNombre());
-        System.out.println("Descarta tu mano actual y roba 2 cartas de tu mazo.");
+        System.out.println("Efecto: Descarta tu mano actual y roba 2 cartas de tu mazo.");
     }
 }
