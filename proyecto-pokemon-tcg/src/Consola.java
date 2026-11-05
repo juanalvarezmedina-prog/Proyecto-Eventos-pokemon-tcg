@@ -10,14 +10,14 @@ public class Consola {
 
     private final Scanner scanner = new Scanner(System.in);
 
-    
+    // Mensajes de lo que paso en la(s) ultima(s) accion(es). Se muestran al redibujar y luego se borran
     private final List<String> registro = new ArrayList<>();
 
     public void mostrarMensaje(String mensaje) {
         System.out.println(mensaje);
     }
 
-    
+    // Guarda un mensaje para mostrarlo despues de limpiar la pantalla
     public void registrarAccion(String mensaje) {
         registro.add(mensaje);
     }
@@ -28,7 +28,7 @@ public class Consola {
         System.out.flush();
     }
 
-    // Limpia la pantalla y muestra el registro de acciones
+    // Limpia la pantalla y muestra el registro de acciones 
     public void mostrarRegistro() {
         limpiarPantalla();
         if (registro.isEmpty()) {
@@ -264,12 +264,12 @@ public class Consola {
     public void anunciarGanador(Jugador ganador) {
         mostrarRegistro();
         registro.clear();
-        System.out.println("El duelo ha terminado.");
-        System.out.println(ganador.getNombre() + " es el ganador con "
-                + ganador.getPuntosPremio() + "/" + PUNTOS_PARA_GANAR + " puntos de premio.");
+        System.out.println("   ¡EL DUELO HA TERMINADO!");
+        System.out.println();
+        System.out.println("   ¡" + ganador.getNombre() + " se corona como nuevo Maestro Pokémon!");
+        System.out.println("   Puntos de premio: " + ganador.getPuntosPremio() + "/" + PUNTOS_PARA_GANAR);
     }
 
-    // ---- ayudas privadas ----
 
     private String descripcionPokemon(PokemonEnJuego p) {
         return p.getCarta().getNombre() + " - PS: " + p.getPsActuales() + "/" + p.getCarta().getPsMaximos()

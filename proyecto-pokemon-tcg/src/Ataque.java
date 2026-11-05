@@ -16,13 +16,13 @@ public class Ataque {
     public String getNombre() {
         return nombre;
     }
-    public Byte getCosto() {
+    public byte getCosto() {
         return costo;
     }
     public TipoEnergia getTipoEnergia() {
         return tipoEnergia;
     }
-    public Short getDano() {
+    public short getDano() {
         return dano;
     }
 

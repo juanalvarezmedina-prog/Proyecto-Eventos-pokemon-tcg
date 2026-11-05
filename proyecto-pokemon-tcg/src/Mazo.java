@@ -52,6 +52,9 @@ public class Mazo {
         int cantidadPokemons = 0;
 
         for (Carta carta : mazo) {
+            if (carta == null) {
+                return false;
+            }
             int veces = copias.getOrDefault(carta.getNombre(), 0) + 1;
             if (veces > 2) {
                 return false;

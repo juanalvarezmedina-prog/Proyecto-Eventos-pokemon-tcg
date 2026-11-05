@@ -142,7 +142,8 @@ public class Partida {
             return;
         }
         if (actual.colocarEnBanco(p)) {
-            consola.registrarAccion(actual.getNombre() + " colocó a " + p.getNombre() + " en el banco.");
+            String info = consola.capturarSalida(p::mostrarInformacion);
+            consola.registrarAccion(actual.getNombre() + " colocó en el banco:\n" + info);
         } else {
             consola.registrarAccion("El banco está lleno.");
         }
@@ -210,7 +211,7 @@ public class Partida {
         return true;
     }
 
-    // Revisa puntos de premio y Pokémon en juego. Si alguien ganó, lo guarda en 'ganador'
+    
     public boolean verificarVictoria() {
         for (int i = 0; i < 2; i++) {
             Jugador j = jugadores[i];
