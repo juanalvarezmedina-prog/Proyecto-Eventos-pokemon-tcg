@@ -27,7 +27,7 @@ public class Mazo {
         return mazo.remove(0);
     }
 
-    // Poké Ball: saca del mazo un Pokémon básico y lo devuelve.
+   
     public Pokemon buscarBasico() {
         for (int i = 0; i < mazo.size(); i++) {
             if (mazo.get(i) instanceof Pokemon) {
@@ -37,12 +37,12 @@ public class Mazo {
         return null;
     }
 
-    // Mulligan: la mano vuelve al mazo (después se baraja)
+   
     public void devolverCartas(List<Carta> cartas) {
         mazo.addAll(cartas);
     }
 
-    // RF4: exactamente 20 cartas, máximo 2 copias de cada una, mínimo 6 Pokémon
+    
     public boolean esValido() {
         if (mazo.size() != 20) {
             return false;

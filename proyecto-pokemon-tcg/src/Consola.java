@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+// se encarga de mostrar la informacion en la consola y de capturar la entrada del usuario
 public class Consola {
     private static final int PUNTOS_PARA_GANAR = 3;
 
