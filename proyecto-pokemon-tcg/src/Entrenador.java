@@ -1,3 +1,5 @@
+import java.util.List;
+
 public abstract class Entrenador extends Carta implements Activable {
     private boolean soporte;
 
@@ -10,5 +12,15 @@ public abstract class Entrenador extends Carta implements Activable {
         return soporte;
     }
 
-    // activar(),lo heredan de Activable y cada carta lo implementa
+    // activar(jugador, rival) lo heredan de Activable y cada carta lo implementa
+
+    // esto es para que mysty elija que pokeom darle la energia
+    public List<PokemonEnJuego> objetivosPosibles(Jugador jugador) {
+        return List.of();
+    }
+
+    // y este es para cuando no se elije a quiern 
+    public boolean activar(Jugador jugador, Jugador rival, PokemonEnJuego objetivo) {
+        return activar(jugador, rival);
+    }
 }
