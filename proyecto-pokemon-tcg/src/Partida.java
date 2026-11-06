@@ -71,7 +71,11 @@ public class Partida {
                 case 2 -> jugarEntrenador(actual, rival);
                 case 3 -> colocarEnBanco(actual);
                 case 4 -> retirar(actual);
-                case 5 -> atacar(actual, rival);
+                case 5 -> {
+                    if (atacar(actual, rival)) {
+                        terminoTurno = true;
+                    }
+                }
                 case 6 -> terminoTurno = true;
             }
         }
@@ -98,7 +102,9 @@ public class Partida {
         if (e == null) {
             return;
         }
-        if (!actual.jugarEntrenador(e, rival)) {
+        if (actual.jugarEntrenador(e, rival)) {
+            e.mostrarInformacion();
+        } else {
             consola.mostrarMensaje("No se pudo jugar " + e.getNombre() + ".");
         }
     }
@@ -127,29 +133,45 @@ public class Partida {
         }
     }
 
-    private void atacar(Jugador actual, Jugador rival) {
+    private boolean atacar(Jugador actual, Jugador rival) {
         if (turno == 1) {
             consola.mostrarMensaje("El primer jugador no puede atacar en su primer turno.");
-            return;
+            return false;
         }
         Ataque ataque = consola.elegirAtaque(actual.getCampo().getActivo());
         if (ataque == null) {
-            return;
+            return false;
         }
+
+        PokemonEnJuego atacante = actual.getCampo().getActivo();
+        PokemonEnJuego defensor = rival.getCampo().getActivo();
+        int psAntes = defensor.getPsActuales();
+
         if (!actual.atacar(rival, ataque)) {
             consola.mostrarMensaje("No puedes usar ese ataque (energía insuficiente o ya atacaste).");
-            return;
+            return false;
+        }
+
+        int danoHecho = psAntes - defensor.getPsActuales();
+        consola.mostrarMensaje(atacante.getCarta().getNombre() + " usó " + ataque.getNombre() + ": "
+                + defensor.getCarta().getNombre() + " pierde " + danoHecho + " PS.");
+        if (defensor.getCarta().getTipo().esDebilA(atacante.getCarta().getTipo())) {
+            consola.mostrarMensaje("¡Es débil a ese tipo! (+20 de daño)");
+        }
+        if (defensor.estaDerrotado()) {
+            consola.mostrarMensaje("¡" + defensor.getCarta().getNombre() + " fue derrotado! "
+                    + actual.getNombre() + " gana " + defensor.getCarta().getPuntosPremio()
+                    + " punto(s) de premio.");
         }
 
         if (verificarVictoria()) {
-            return;
+            return true;
         }
         while (rival.necesitaReemplazo()) {
             int indice = consola.elegirDelBanco(rival, false);
             rival.reemplazarActivo(indice);
         }
-        this.turno++;
-        
+        return true;
     }
 
     // Revisa puntos de premio y Pokémon en juego. Si alguien ganó, lo guarda en 'ganador'
@@ -165,3 +187,4 @@ public class Partida {
         return false;
     }
 }
+
