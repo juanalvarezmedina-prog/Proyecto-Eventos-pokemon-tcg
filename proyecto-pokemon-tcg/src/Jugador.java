@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 public class Jugador {
     private static final int ManoInicial = 5;
@@ -31,8 +32,16 @@ public class Jugador {
     }
 
     public List<Carta> getMano() {
-        return mano;
-    }
+    return Collections.unmodifiableList(mano);
+}
+
+public void agregarAMano(Carta carta) {
+    mano.add(carta);
+}
+
+public void descartarMano() {
+    mano.clear();
+}
 
     public Campo getCampo() {
         return campo;
@@ -87,14 +96,20 @@ public class Jugador {
     }
 
     public boolean jugarEntrenador(Entrenador c, Jugador rival) {
-        if (!mano.contains(c)) {
+        return jugarEntrenador(c, rival, null);
+    }
+
+    public boolean puedeJugarEntrenador(Entrenador c) {
+        return mano.contains(c) && !(c.esSoporte() && yaUsoSoporte);
+    }
+
+    // objetivo: Pokemon elegido por el jugador (null si la carta no lo necesita)
+    public boolean jugarEntrenador(Entrenador c, Jugador rival, PokemonEnJuego objetivo) {
+        if (!puedeJugarEntrenador(c)) {
             return false;
         }
-        if (c.esSoporte() && yaUsoSoporte) {
-            return false;
-        }
-        // Polimorfismo porque no sabemos qué carta es, cada una ejecuta su propio efecto
-        boolean seJugo = c.activar(this, rival);
+
+        boolean seJugo = c.activar(this, rival, objetivo);
         if (seJugo) {
             if (c.esSoporte()) {
                 yaUsoSoporte = true;
@@ -168,7 +183,7 @@ public class Jugador {
         return false;
     }
 
-    // Devuelve la mano al mazo, baraja y reparte 5. Sirve para el reparto inicial y para el mulligan
+    // Mulligan
     public void hacerMulligan() {
         mazo.devolverCartas(mano);
         mano.clear();
@@ -200,3 +215,4 @@ public boolean reemplazarActivo(int indiceBanco) {
     return true;
 }
 }
+

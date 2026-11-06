@@ -1,3 +1,6 @@
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -7,8 +10,48 @@ public class Consola {
 
     private final Scanner scanner = new Scanner(System.in);
 
+    // Mensajes de lo que paso en la(s) ultima(s) accion(es). Se muestran al redibujar y luego se borran
+    private final List<String> registro = new ArrayList<>();
+
     public void mostrarMensaje(String mensaje) {
         System.out.println(mensaje);
+    }
+
+    // Guarda un mensaje para mostrarlo despues de limpiar la pantalla
+    public void registrarAccion(String mensaje) {
+        registro.add(mensaje);
+    }
+
+    
+    public void limpiarPantalla() {
+        System.out.print("\033[H\033[2J\033[3J");
+        System.out.flush();
+    }
+
+    // Limpia la pantalla y muestra el registro de acciones 
+    public void mostrarRegistro() {
+        limpiarPantalla();
+        if (registro.isEmpty()) {
+            return;
+        }
+        System.out.println("Ultimas acciones:");
+        for (String mensaje : registro) {
+            System.out.println("  " + mensaje.replace("\n", "\n  "));
+        }
+        System.out.println();
+    }
+
+    
+    public String capturarSalida(Runnable accion) {
+        PrintStream original = System.out;
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
+        try {
+            accion.run();
+        } finally {
+            System.setOut(original);
+        }
+        return buffer.toString(StandardCharsets.UTF_8).trim();
     }
 
     public int leerOpcion(int min, int max) {
@@ -42,7 +85,8 @@ public class Consola {
     }
 
     public void mostrarCampo(Jugador actual, Jugador rival, int turno) {
-        System.out.println();
+        mostrarRegistro();
+        registro.clear();
         System.out.println("TURNO " + turno + " - " + actual.getNombre());
         System.out.println();
 
@@ -90,7 +134,7 @@ public class Consola {
             }
         }
         if (opciones.isEmpty()) {
-            System.out.println("No tienes Pokemon en la mano.");
+            registrarAccion("No tienes Pokemon en la mano.");
             return null;
         }
 
@@ -118,7 +162,7 @@ public class Consola {
         opciones.addAll(campo.getBanco());
 
         if (opciones.isEmpty()) {
-            System.out.println("No tienes Pokemon en juego.");
+            registrarAccion("No tienes Pokemon en juego.");
             return null;
         }
 
@@ -134,6 +178,22 @@ public class Consola {
         return opcion == 0 ? null : opciones.get(opcion - 1);
     }
 
+    
+    public PokemonEnJuego elegirObjetivo(Jugador jugador, List<PokemonEnJuego> opciones) {
+        Campo campo = jugador.getCampo();
+        System.out.println("Elige un Pokemon:");
+        for (int i = 0; i < opciones.size(); i++) {
+            PokemonEnJuego p = opciones.get(i);
+            String lugar = (p == campo.getActivo()) ? "Activo" : "Banco";
+            System.out.println((i + 1) + ". [" + lugar + "] " + descripcionPokemon(p));
+        }
+        System.out.println("0. Cancelar");
+
+        int opcion = leerOpcion(0, opciones.size());
+        return opcion == 0 ? null : opciones.get(opcion - 1);
+    }
+
+    // Devuelve null si cancela o no hay entrenadores en la mano.
     public Entrenador elegirEntrenadorDeMano(Jugador jugador) {
         List<Entrenador> opciones = new ArrayList<>();
         for (Carta c : jugador.getMano()) {
@@ -142,7 +202,7 @@ public class Consola {
             }
         }
         if (opciones.isEmpty()) {
-            System.out.println("No tienes cartas de entrenador en la mano.");
+            registrarAccion("No tienes cartas de entrenador en la mano.");
             return null;
         }
 
@@ -178,12 +238,12 @@ public class Consola {
   
     public Ataque elegirAtaque(PokemonEnJuego activo) {
         if (activo == null) {
-            System.out.println("No tienes Pokemon activo.");
+            registrarAccion("No tienes Pokemon activo.");
             return null;
         }
         List<Ataque> ataques = activo.getCarta().getAtaques();
         if (ataques.isEmpty()) {
-            System.out.println("Este Pokemon no tiene ataques.");
+            registrarAccion("Este Pokemon no tiene ataques.");
             return null;
         }
 
@@ -200,13 +260,14 @@ public class Consola {
     }
 
     public void anunciarGanador(Jugador ganador) {
+        mostrarRegistro();
+        registro.clear();
+        System.out.println("   ¡EL DUELO HA TERMINADO!");
         System.out.println();
-        System.out.println("El duelo ha terminado.");
-        System.out.println(ganador.getNombre() + " es el ganador con "
-                + ganador.getPuntosPremio() + "/" + PUNTOS_PARA_GANAR + " puntos de premio.");
+        System.out.println("   ¡" + ganador.getNombre() + " se corona como nuevo Maestro Pokémon!");
+        System.out.println("   Puntos de premio: " + ganador.getPuntosPremio() + "/" + PUNTOS_PARA_GANAR);
     }
 
-    // ---- ayudas privadas ----
 
     private String descripcionPokemon(PokemonEnJuego p) {
         return p.getCarta().getNombre() + " - PS: " + p.getPsActuales() + "/" + p.getCarta().getPsMaximos()
@@ -240,6 +301,10 @@ public class Consola {
             }
         }
         return sb.toString();
+    }
+    public String leerTexto(String pregunta) {
+        System.out.print(pregunta + " ");
+        return scanner.nextLine().trim();
     }
 }
 //no me gusta java

@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Partida {
     private static final int PUNTOS_PARA_GANAR = 3;
 
@@ -56,6 +58,7 @@ public class Partida {
 
         actual.iniciarTurno();
         if (!actual.robarCarta()) {          // mazo vacío: pierde
+            consola.registrarAccion(actual.getNombre() + " no tiene cartas para robar.");
             ganador = rival;
             return;
         }
@@ -71,8 +74,15 @@ public class Partida {
                 case 2 -> jugarEntrenador(actual, rival);
                 case 3 -> colocarEnBanco(actual);
                 case 4 -> retirar(actual);
-                case 5 -> atacar(actual, rival);
-                case 6 -> terminoTurno = true;
+                case 5 -> {
+                    if (atacar(actual, rival)) {
+                        terminoTurno = true;
+                    }
+                }
+                case 6 -> {
+                    consola.registrarAccion(actual.getNombre() + " pasó el turno.");
+                    terminoTurno = true;
+                }
             }
         }
 
@@ -83,13 +93,15 @@ public class Partida {
     }
 
     private void adjuntarEnergia(Jugador actual) {
-        if (actual.getEnergiaDisponible() == null) {
-            consola.mostrarMensaje("Ya usaste la energía de este turno.");
+        TipoEnergia energia = actual.getEnergiaDisponible();
+        if (energia == null) {
+            consola.registrarAccion("Ya usaste la energía de este turno.");
             return;
         }
         PokemonEnJuego destino = consola.elegirPokemonPropio(actual);
-        if (destino != null) {
-            actual.adjuntarEnergiaDeZona(destino);
+        if (destino != null && actual.adjuntarEnergiaDeZona(destino)) {
+            consola.registrarAccion(actual.getNombre() + " adjuntó energía " + energia + " a "
+                    + destino.getCarta().getNombre() + ".");
         }
     }
 
@@ -98,8 +110,29 @@ public class Partida {
         if (e == null) {
             return;
         }
-        if (!actual.jugarEntrenador(e, rival)) {
-            consola.mostrarMensaje("No se pudo jugar " + e.getNombre() + ".");
+        if (!actual.puedeJugarEntrenador(e)) {
+            consola.registrarAccion("Ya jugaste una carta de Soporte este turno.");
+            return;
+        }
+
+        // Si la carta necesita que el jugador elija un Pokémon (ej. Misty), se le pregunta
+        PokemonEnJuego objetivo = null;
+        List<PokemonEnJuego> objetivos = e.objetivosPosibles(actual);
+        if (!objetivos.isEmpty()) {
+            objetivo = consola.elegirObjetivo(actual, objetivos);
+            if (objetivo == null) {
+                return;   // canceló
+            }
+        }
+
+        if (actual.jugarEntrenador(e, rival, objetivo)) {
+            String info = consola.capturarSalida(e::mostrarInformacion);
+            consola.registrarAccion(actual.getNombre() + " jugó una carta de entrenador:\n" + info);
+            if (objetivo != null) {
+                consola.registrarAccion("Objetivo: " + objetivo.getCarta().getNombre());
+            }
+        } else {
+            consola.registrarAccion("No se pudo jugar " + e.getNombre() + ".");
         }
     }
 
@@ -108,51 +141,77 @@ public class Partida {
         if (p == null) {
             return;
         }
-        if (!actual.colocarEnBanco(p)) {
-            consola.mostrarMensaje("El banco está lleno.");
+        if (actual.colocarEnBanco(p)) {
+            String info = consola.capturarSalida(p::mostrarInformacion);
+            consola.registrarAccion(actual.getNombre() + " colocó en el banco:\n" + info);
+        } else {
+            consola.registrarAccion("El banco está lleno.");
         }
     }
 
     private void retirar(Jugador actual) {
         if (actual.getCampo().getBanco().isEmpty()) {
-            consola.mostrarMensaje("No tienes Pokémon en el banco.");
+            consola.registrarAccion("No tienes Pokémon en el banco.");
             return;
         }
         int indice = consola.elegirDelBanco(actual, true);   // -1 si cancela
         if (indice == -1) {
             return;
         }
-        if (!actual.retirarActivo(indice)) {
-            consola.mostrarMensaje("No tienes energía suficiente para retirar.");
+        String retirado = actual.getCampo().getActivo().getCarta().getNombre();
+        if (actual.retirarActivo(indice)) {
+            consola.registrarAccion(actual.getNombre() + " retiró a " + retirado + ". Ahora "
+                    + actual.getCampo().getActivo().getCarta().getNombre() + " es el Pokémon activo.");
+        } else {
+            consola.registrarAccion("No tienes energía suficiente para retirar.");
         }
     }
 
-    private void atacar(Jugador actual, Jugador rival) {
+    private boolean atacar(Jugador actual, Jugador rival) {
         if (turno == 1) {
-            consola.mostrarMensaje("El primer jugador no puede atacar en su primer turno.");
-            return;
+            consola.registrarAccion("El primer jugador no puede atacar en su primer turno.");
+            return false;
         }
         Ataque ataque = consola.elegirAtaque(actual.getCampo().getActivo());
         if (ataque == null) {
-            return;
+            return false;
         }
+
+        PokemonEnJuego atacante = actual.getCampo().getActivo();
+        PokemonEnJuego defensor = rival.getCampo().getActivo();
+        int psAntes = defensor.getPsActuales();
+
         if (!actual.atacar(rival, ataque)) {
-            consola.mostrarMensaje("No puedes usar ese ataque (energía insuficiente o ya atacaste).");
-            return;
+            consola.registrarAccion("No puedes usar ese ataque (energía insuficiente o ya atacaste).");
+            return false;
+        }
+
+        int danoHecho = psAntes - defensor.getPsActuales();
+        consola.registrarAccion(actual.getNombre() + " atacó: " + atacante.getCarta().getNombre() + " usó "
+                + ataque.getNombre() + " y " + defensor.getCarta().getNombre() + " pierde " + danoHecho + " PS.");
+        if (defensor.getCarta().getTipo().esDebilA(atacante.getCarta().getTipo())) {
+            consola.registrarAccion("¡Es débil a ese tipo! (+20 de daño)");
+        }
+        if (defensor.estaDerrotado()) {
+            consola.registrarAccion("¡" + defensor.getCarta().getNombre() + " fue derrotado! "
+                    + actual.getNombre() + " gana " + defensor.getCarta().getPuntosPremio()
+                    + " punto(s) de premio.");
         }
 
         if (verificarVictoria()) {
-            return;
+            return true;
         }
         while (rival.necesitaReemplazo()) {
+            consola.mostrarRegistro();   // que el rival vea lo que pasó antes de elegir el reemplazo
             int indice = consola.elegirDelBanco(rival, false);
             rival.reemplazarActivo(indice);
+            consola.registrarAccion(rival.getNombre() + " puso a "
+                    + rival.getCampo().getActivo().getCarta().getNombre() + " como Pokémon activo.");
         }
-        this.turno++;
-        
+        return true;
     }
 
-    // Revisa puntos de premio y Pokémon en juego. Si alguien ganó, lo guarda en 'ganador'
+    
     public boolean verificarVictoria() {
         for (int i = 0; i < 2; i++) {
             Jugador j = jugadores[i];
